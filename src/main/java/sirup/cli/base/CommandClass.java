@@ -1,8 +1,5 @@
 package sirup.cli.base;
 
-import sirup.cli.experimental.Callback;
-import sirup.cli.experimental.ChainBlock;
-import sirup.cli.experimental.ValueCallback;
 import sirup.cli.inputs.Input;
 
 public abstract class CommandClass {

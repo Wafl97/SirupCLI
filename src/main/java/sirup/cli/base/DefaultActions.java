@@ -1,11 +1,11 @@
 package sirup.cli.base;
 
 import sirup.cli.annotations.Command;
-import sirup.cli.annotations.ActionsClass;
+import sirup.cli.annotations.Commands;
 
 import java.util.List;
 
-@ActionsClass
+@Commands
 public class DefaultActions extends CommandClass {
 
     private static List<SirupCli.CliObject> cliObjects;

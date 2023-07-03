@@ -161,15 +161,15 @@ public class SirupCli {
         System.out.println(header);
     }
 
-    private final String DIR = "sirup.cli";
+    private final String DIR = SirupCli.class.getPackageName();
     private void parseDefaultCommand() {
         Reflections reflections = new Reflections(DIR);
-        _parseCommands(reflections, ActionsClass.class);
+        _parseCommands(reflections, Commands.class);
     }
 
     private void parseCliCommands() {
         Reflections reflections = new Reflections(pack);
-        _parseCommands(reflections, ActionsClass.class);
+        _parseCommands(reflections, Commands.class);
     }
 
     private void parseDefaultSecureCommand() {
