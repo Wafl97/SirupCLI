@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.experimental.NewTestCommands;
 import sirup.cli.base.SirupCli;
 import sirup.cli.inputs.Input;
 

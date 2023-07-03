@@ -2,13 +2,12 @@ package sirup.cli.base;
 
 import sirup.cli.annotations.Command;
 import sirup.cli.annotations.SecureActionsClass;
-import sirup.cli.inputs.Input;
 
 @SecureActionsClass
-public class DefaultSecureActions {
+public class DefaultSecureActions extends CommandClass {
 
     @Command(command = "logout", description = "Logout the current user")
-    public static void logout(Input input, Arguments arguments) {
+    public static void logout() {
         SirupCli.logout();
         SirupCli.clearScreen();
     }

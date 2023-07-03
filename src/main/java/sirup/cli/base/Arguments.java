@@ -11,9 +11,9 @@ public class Arguments {
 
     private final Map<String,String> argsMap;
 
-    public Arguments(String[] args) {
+    public Arguments() {
         this.argsMap = new HashMap<>();
-        buildArgMap(args);
+        //buildArgMap(args);
     }
 
     public Chain ifContains(String flag, ArgsCallback callback) {
@@ -56,11 +56,11 @@ public class Arguments {
     }
 
     public boolean contains(String flag) {
-        return argsMap.containsKey(flag);
+        return argsMap.containsKey("-" + flag);
     }
 
     public String get(String flag) {
-        return this.argsMap.get(flag);
+        return this.argsMap.get("-" + flag);
     }
 
     //Only for debugging

@@ -12,13 +12,14 @@ import java.util.*;
 
 public class SirupCli {
 
-    private final Map<String, Method> methodMap;
+    private final Map<String, CallPair> methodMap;
+    private record CallPair(Method method, CommandClass comClass) {}
     private final List<CliObject> cliObjects;
     private final String pack;
     private final Input input;
     private boolean skipHeader = false;
     private static PrintCallback goodbyeMessage = () -> System.out.println("Bye");
-    static Arguments arguments;
+    private final Arguments arguments = new Arguments();
 
     //Security
     private LoginHandler loginHandler;
@@ -34,7 +35,6 @@ public class SirupCli {
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             else
                 new ProcessBuilder("clear").inheritIO().start().waitFor();
-                //Runtime.getRuntime().exec("clear");
         }
         catch (IOException | InterruptedException ignored) {}
     }
@@ -131,15 +131,18 @@ public class SirupCli {
             return;
         }
         String command = inputArgs[0];
-        Method method = methodMap.get(command);
-        if (method == null) {
+        CallPair pair = methodMap.get(command);
+        if (pair == null || pair.method() == null || pair.comClass() == null) {
             System.out.println("Unknown command");
             return;
         }
+        Method method = pair.method();
+        CommandClass clazz = pair.comClass();
         try {
-            Arguments arguments = new Arguments(inputArgs);
-            Object[] params = { input, arguments };
-            method.invoke(null, params);
+            arguments.rebuild(inputArgs);
+            //Arguments arguments = new Arguments(inputArgs);
+            //Object[] params = { input, arguments };
+            method.invoke(clazz);
         } catch (InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -182,22 +185,38 @@ public class SirupCli {
     private void _parseCommands(Reflections reflections, Class<? extends Annotation> classAnnotation) {
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(classAnnotation);
         classes.forEach(clazz -> {
-            Method[] methods = clazz.getDeclaredMethods();
-            for (Method method : methods) {
-                if (method.isAnnotationPresent(Command.class)) {
-                    Command a = method.getAnnotation(Command.class);
-                    Set<CliObject.CliArg> cliArgs = new HashSet<>();
-                    methodMap.put(a.command(), method);
-                    if (!a.alias().isEmpty()) {
-                        methodMap.put(a.alias(), method);
-                    }
-                    if (method.isAnnotationPresent(Args.class)) {
-                        for (Arg arg : method.getAnnotation(Args.class).value()) {
-                            cliArgs.add(new CliObject.CliArg(arg.flag(), arg.arg(), arg.description()));
+            try {
+                CommandClass comClass = (CommandClass) clazz.getConstructors()[0].newInstance(null);
+                comClass.setInput(input);
+                comClass.setArguments(arguments);
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    if (method.isAnnotationPresent(Command.class)) {
+                        Command a = method.getAnnotation(Command.class);
+                        Set<CliObject.CliArg> cliArgs = new HashSet<>();
+                        methodMap.put(a.command(), new CallPair(method, comClass));
+                        if (!a.alias().isEmpty()) {
+                            methodMap.put(a.alias(), new CallPair(method, comClass));
                         }
+                        if (method.isAnnotationPresent(Args.class)) {
+                            for (Arg arg : method.getAnnotation(Args.class).value()) {
+                                cliArgs.add(new CliObject.CliArg(arg.flag(), arg.arg(), arg.description()));
+                            }
+                        }
+                        cliObjects.add(new CliObject(a.command(), a.alias(), a.description(), cliArgs));
                     }
-                    cliObjects.add(new CliObject(a.command(), a.alias(), a.description(), cliArgs));
                 }
+            } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassCastException e) {
+                System.err.println(clazz.getName() +  " must extend " + CommandClass.class.getName());
+                System.err.println("Commands found in this class will not be available");
+            } catch (IllegalArgumentException e) {
+                System.err.println(clazz.getName() + " must have its first constructor take no arguments");
+                System.err.println("Commands found in this class will not be available");
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println(clazz.getName() + " must have a public constructor");
+                System.err.println("Commands found in this class will not be available");
             }
         });
     }

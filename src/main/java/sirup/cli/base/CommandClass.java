@@ -1,12 +1,22 @@
-package sirup.cli.experimental;
+package sirup.cli.base;
 
-import sirup.cli.base.Arguments;
+import sirup.cli.experimental.Callback;
+import sirup.cli.experimental.ChainBlock;
+import sirup.cli.experimental.ValueCallback;
 import sirup.cli.inputs.Input;
 
 public abstract class CommandClass {
 
     private Input input;
     private Arguments arguments;
+
+     void setInput(Input input) {
+         this.input = input;
+     }
+
+     void setArguments(Arguments arguments) {
+         this.arguments = arguments;
+     }
 
     protected ChainBlock when(String flag, Callback callback) {
         if (arguments.contains(flag)) {

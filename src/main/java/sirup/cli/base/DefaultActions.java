@@ -2,12 +2,11 @@ package sirup.cli.base;
 
 import sirup.cli.annotations.Command;
 import sirup.cli.annotations.ActionsClass;
-import sirup.cli.inputs.Input;
 
 import java.util.List;
 
 @ActionsClass
-public class DefaultActions {
+public class DefaultActions extends CommandClass {
 
     private static List<SirupCli.CliObject> cliObjects;
 
@@ -16,7 +15,7 @@ public class DefaultActions {
     }
 
     @Command(command = "help", alias = "?", description = "Get a list of all the commands")
-    public static void printHelp(Input input, Arguments arguments) {
+    public static void printHelp() {
         System.out.println("Commands:");
         DefaultActions.cliObjects.forEach(cliObject -> {
             if (cliObject.alias() != null && !cliObject.alias().isEmpty()) {
@@ -44,12 +43,12 @@ public class DefaultActions {
     }
 
     @Command(command = "quit", alias = "q", description = "Closes the program")
-    public static void quit(Input input, Arguments arguments) {
+    public static void quit() {
         SirupCli.stop();
     }
 
     @Command(command = "clear", alias = "c", description = "Clears the console window")
-    public static void clearScreen(Input input, Arguments arguments) {
+    public static void clearScreen() {
         SirupCli.clearScreen();
     }
 }
