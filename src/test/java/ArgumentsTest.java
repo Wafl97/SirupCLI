@@ -1,8 +1,10 @@
 import org.junit.jupiter.api.Test;
 import sirup.cli.base.Arguments;
+import sirup.cli.base.TesterCommandClass;
+import sirup.cli.inputs.Input;
+import sirup.cli.inputs.SequenceReader;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 
 public class ArgumentsTest {
 
@@ -88,5 +90,72 @@ public class ArgumentsTest {
         arguments.ifContainsGet("-y", y -> {
             assertEquals("file.txt",y);
         });
+    }
+
+    @Test
+    public void commandClassTest1() {
+        String input = "t3 -a 'Test a'";
+        Arguments arguments = new Arguments();
+        arguments.rebuild(input.split(" "));
+
+        SequenceReader sequenceReader = new SequenceReader();
+        Input in = new Input(sequenceReader);
+
+        TestCommandClass tcc = new TestCommandClass(in,arguments);
+        tcc.testCommand1();
+    }
+
+    @Test
+    public void commandClassTest2() {
+        String input = "t3 -b";
+        Arguments arguments = new Arguments();
+        arguments.rebuild(input.split(" "));
+
+        SequenceReader sequenceReader = new SequenceReader();
+        Input in = new Input(sequenceReader);
+
+        TestCommandClass tcc = new TestCommandClass(in,arguments);
+        tcc.testCommand2();
+    }
+
+    @Test
+    public void commandClassTest3() {
+        String input = "t3 -x";
+        Arguments arguments = new Arguments();
+        arguments.rebuild(input.split(" "));
+
+        SequenceReader sequenceReader = new SequenceReader();
+        Input in = new Input(sequenceReader);
+
+        TestCommandClass tcc = new TestCommandClass(in,arguments);
+        tcc.testCommand3();
+    }
+
+    @Test
+    public void commandClassTest4() {
+        String input = "t3 -y";
+        Arguments arguments = new Arguments();
+        arguments.rebuild(input.split(" "));
+
+        SequenceReader sequenceReader = new SequenceReader();
+        Input in = new Input(sequenceReader);
+
+        TestCommandClass tcc = new TestCommandClass(in,arguments);
+        tcc.testCommand4();
+    }
+
+    @Test
+    public void commandClassTest5() {
+        String input = "";
+        Arguments arguments = new Arguments();
+        arguments.rebuild(input.split(" "));
+
+        SequenceReader sequenceReader = new SequenceReader();
+        sequenceReader.then("line one");
+        sequenceReader.then("line two");
+        Input in = new Input(sequenceReader);
+
+        TestCommandClass tcc = new TestCommandClass(in,arguments);
+        tcc.testCommand5();
     }
 }

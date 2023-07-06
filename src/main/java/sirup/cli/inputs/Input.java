@@ -13,6 +13,10 @@ public class Input {
         }
     }
 
+    public Input(InputReader reader) {
+        this.reader = reader;
+    }
+
     public String readLine() {
         return reader.readLine();
     }

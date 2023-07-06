@@ -19,12 +19,13 @@ public static void main(String[]args){
     String pack = "org.example"; //Your project groupId
     new SirupCli(pack)
         .addLoginHandler(Main::loginHandler)
+        .skipHeader() // but you would never do this :^)
         .start();
 }
 ````
 
 ````java
-public static boolean loginHandler(Concole console) {
+public static boolean loginHandler(Input input) {
     //Your login logic
     return loginSuccess;
 }
@@ -33,15 +34,13 @@ public static boolean loginHandler(Concole console) {
 ### Add CLI command
 
 ````java
-import sirup.cli.annotations.CliAction;
-import sirup.cli.annotations.CliActionsClass;
+import sirup.cli.annotations.Commands;
+import sirup.cli.base.CommandClass;
 
-import java.io.Console;
-
-@CliActionsClass
-public class MyCommandClass {
+@Commands
+public class MyCommandClass extends CommandClass {
     @CliAction(command = "command", alias = "c", description = "This is my command")
-    public static void myCommand(Console console, Map<String, String> argsMap) {
+    public static void myCommand() {
         //Command logic
     }
 }
@@ -50,20 +49,21 @@ public class MyCommandClass {
 ### Add command with args
 
 ````java
-import sirup.cli.annotations.CliAction;
-import sirup.cli.annotations.CliActionsClass;
-import sirup.cli.annotations.CliArgs;
 
-import java.io.Console;
+import sirup.cli.annotations.Arg;
+import sirup.cli.annotations.Args;
+import sirup.cli.annotations.Command;
+import sirup.cli.annotations.Commands;
+import sirup.cli.base.CommandClass;
 
-@CliActionsClass
-public class MyCommandClass {
-    @CliAction(command = "command", alias = "c", description = "This is my command")
+@Commands
+public class MyCommandClass extends CommandClass {
+    @Command(command = "command", alias = "c", description = "This is my command")
     @Args(value = {
-            @CliArgs.CliArg(flag = "a", arg = "Name or type", description = "This will look for '-a' and whatever follows"),
-            @CliArgs.CliArg(flag = "b")
+            @Arg(flag = "a", arg = "Name or type", description = "This will look for '-a' and whatever follows"),
+            @Arg(flag = "b")
     })
-    public static void myCommand(Console console, Map<String, String> argsMap) {
+    public static void myCommand() {
         //Command logic
     }
 }
@@ -74,16 +74,64 @@ public class MyCommandClass {
 Secure commands will only be parsed if a login-handler has been added.
 
 ````java
-import sirup.cli.annotations.CliAction;
-import sirup.cli.annotations.CliSecureActionsClass;
 
-import java.io.Console;
 
-@CliSecureActionsClass
-public class MySecureCommandClass {
+import sirup.cli.annotations.SecureActionsClass;
+import sirup.cli.base.CommandClass;
+
+@SecureActionsClass
+public class MySecureCommandClass extends CommandClass {
     @CliAction(command = "secure_command", alias = "sc", description = "This is my secure command")
-    public static void mySecureCommand(Console console) {
+    public static void mySecureCommand() {
         //Secure command logic
     }
 }
+````
+
+## CommandClass
+
+The CommandClass provides method for checking if different arguments are present for the different commands.
+
+````java
+import sirup.cli.annotations.Commands;
+import sirup.cli.base.CommandClass;
+
+@Commands
+public class MyCommandClass extends CommandClass {
+    @CliAction(command = "command", alias = "c", description = "This is my command")
+    @Args(value = {
+            @Arg(flag = "a", arg = "Name or type", description = "This will look for '-a' and whatever follows"),
+            @Arg(flag = "b")
+    })
+    public static void myCommand() {
+        with("a", a -> {
+            // 'a' is the value of the argument
+        });
+
+        when("b" () -> {
+            // 'b' will never have a value
+        });
+    }
+}
+````
+
+These can be chained to check for the presents of different argument in sequence
+
+````java
+use("a", a -> {})
+.elseUse("x", x -> {})
+.elseWhen("c", () -> {})
+.elseDo(() -> {});
+
+when("b", () -> {})
+.elseUse("z", z -> {})
+.elseWhen("y", () -> {})
+.elseDo(() -> {});
+````
+
+In addition to these argument checking method, there are also methods for reading inputs during the command, both for normal text and for passwords
+
+````java
+String line = readLine();
+String secret = readPassword();
 ````
