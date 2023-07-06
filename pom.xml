@@ -5,9 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>sirup.cli</groupId>
-    <artifactId>SirupCLI</artifactId>
+    <artifactId>sirup-cli-kit</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Sirup CLI Kit</name>
+            <url>https://maven.pkg.github.com/Wafl97/SirupCLI</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
