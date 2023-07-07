@@ -3,14 +3,14 @@ package sirup.cli.base;
 import sirup.cli.annotations.Command;
 import sirup.cli.annotations.Commands;
 
-import java.util.List;
+import java.util.Set;
 
 @Commands
 public class DefaultActions extends CommandClass {
 
-    private static List<SirupCli.CliObject> cliObjects;
+    private static Set<SirupCli.CliObject> cliObjects;
 
-    public static void setCliObjects(List<SirupCli.CliObject> cliObjects) {
+    public static void setCliObjects(Set<SirupCli.CliObject> cliObjects) {
         DefaultActions.cliObjects = cliObjects;
     }
 

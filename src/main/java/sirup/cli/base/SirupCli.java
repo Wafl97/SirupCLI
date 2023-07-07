@@ -1,6 +1,6 @@
 package sirup.cli.base;
 
-import org.reflections.Reflections;
+//import org.reflections.Reflections;
 import sirup.cli.annotations.*;
 import sirup.cli.inputs.Input;
 
@@ -12,9 +12,12 @@ import java.util.*;
 
 public class SirupCli {
 
+    //Internal
+    private final Loader loader;
+
     private final Map<String, CallPair> methodMap;
     private record CallPair(Method method, CommandClass comClass) {}
-    private final List<CliObject> cliObjects;
+    private final Set<CliObject> cliObjects;
     private final String pack;
     private final Input input;
     private boolean skipHeader = false;
@@ -45,9 +48,10 @@ public class SirupCli {
     }
 
     public SirupCli(final String pack) {
+        loader = new Loader();
         input = new Input();
         methodMap = new HashMap<>();
-        cliObjects = new ArrayList<>();
+        cliObjects = new HashSet<>();
         this.pack = pack;
     }
 
@@ -87,6 +91,10 @@ public class SirupCli {
         }
         parseDefaultCommand();
         parseCliCommands();
+        if (this.methodMap.isEmpty()) {
+            System.out.println("Found no commands, exiting program");
+            return;
+        }
         DefaultActions.setCliObjects(this.cliObjects);
         loggedIn = loginHandler == null;
         if (loginHandler != null) {
@@ -163,28 +171,34 @@ public class SirupCli {
 
     private final String DIR = SirupCli.class.getPackageName();
     private void parseDefaultCommand() {
-        Reflections reflections = new Reflections(DIR);
-        _parseCommands(reflections, Commands.class);
+        //Reflections reflections = new Reflections(DIR);
+        _parseCommands(DIR, Commands.class);
     }
 
     private void parseCliCommands() {
-        Reflections reflections = new Reflections(pack);
-        _parseCommands(reflections, Commands.class);
+        //Reflections reflections = new Reflections(pack);
+        _parseCommands(pack, Commands.class);
     }
 
     private void parseDefaultSecureCommand() {
-        Reflections reflections = new Reflections(DIR);
-        _parseCommands(reflections, SecureActionsClass.class);
+        //Reflections reflections = new Reflections(DIR);
+        _parseCommands(DIR, SecureActionsClass.class);
     }
 
     private void parseCliSecureCommands() {
-        Reflections reflections = new Reflections(pack);
-        _parseCommands(reflections, SecureActionsClass.class);
+        //Reflections reflections = new Reflections(pack);
+        _parseCommands(pack, SecureActionsClass.class);
     }
 
-    private void _parseCommands(Reflections reflections, Class<? extends Annotation> classAnnotation) {
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(classAnnotation);
+    private void _parseCommands(String dir, Class<? extends Annotation> classAnnotation) {
+        System.out.println("Loading " + dir + ", checking for " + classAnnotation);
+        Set<Class<?>> classes = loader.load(dir, classAnnotation); //reflections.getTypesAnnotatedWith(classAnnotation);
+        if (classes.isEmpty()) {
+            System.out.println("No classes found in " + dir + " with " + classAnnotation);
+            return;
+        }
         classes.forEach(clazz -> {
+            System.out.println(clazz);
             try {
                 CommandClass comClass = (CommandClass) clazz.getConstructors()[0].newInstance(null);
                 comClass.setInput(input);
