@@ -1,7 +1,5 @@
 package sirup.cli.base;
 
-import org.example.Main;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -80,7 +78,7 @@ public class Loader {
     private void checkRuntime() {
         String loaderDir = Loader.class.getResource("Loader.class").toString();
         try {
-            System.out.println(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            System.out.println(SirupCli.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -89,7 +87,7 @@ public class Loader {
             System.out.println("Running in JAR");
 
             try {
-                classLoader = makeJarClassLoader(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                classLoader = makeJarClassLoader(SirupCli.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
             }
