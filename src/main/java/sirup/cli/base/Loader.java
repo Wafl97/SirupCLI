@@ -13,13 +13,16 @@ public class Loader {
 
     public Loader() {
         checkRuntime();
+        //isRuntimeJAR();
     }
 
     public Set<Class<?>> load(String packageName) {
+        isRuntimeJAR(packageName);
         return loadClasses(loadClassPaths(packageName));
     }
 
     public Set<Class<?>> load(String packageName, Class annotation) {
+        isRuntimeJAR(packageName);
         if (inJar) {
             return loadJar(packageName)
                         .stream()
@@ -75,6 +78,18 @@ public class Loader {
 
     private boolean inJar = false;
 
+    private boolean isRuntimeJAR(String path) {
+        File file = new File(path);
+        System.out.println("path is dir : " + file.isDirectory());
+        String loaderDir = Loader.class.getResource("Loader.class").toString();
+        try {
+            System.out.println(SirupCli.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return loaderDir.startsWith("jar");
+    }
+
     private void checkRuntime() {
         String loaderDir = Loader.class.getResource("Loader.class").toString();
         try {
@@ -98,6 +113,7 @@ public class Loader {
     }
 
     private Set<Class<?>> jarClasses;
+
     private Set<Class<?>> loadJar(String packageName) {
         if (jarClasses != null) {
             return jarClasses.stream()
@@ -119,6 +135,7 @@ public class Loader {
     }
 
     private List<String> classPaths;
+
     private ClassLoader makeJarClassLoader(String jarPath) throws IOException {
         classPaths = new ArrayList<>();
         JarInputStream jarInputStream = new JarInputStream(new FileInputStream(jarPath));
