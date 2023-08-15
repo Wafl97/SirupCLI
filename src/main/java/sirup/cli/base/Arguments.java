@@ -59,6 +59,14 @@ public class Arguments {
         return argsMap.containsKey("-" + flag);
     }
 
+    public boolean containsAll(String ...flags) {
+        for (String flag : flags) {
+            if (!contains(flag))
+                return false;
+        }
+        return true;
+    }
+
     public String get(String flag) {
         return this.argsMap.get("-" + flag);
     }

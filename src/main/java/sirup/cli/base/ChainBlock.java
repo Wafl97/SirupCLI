@@ -10,7 +10,7 @@ public class ChainBlock {
         this.hasExecuted = hasExecuted;
     }
 
-    public ChainBlock elseUse(String flag, ValueCallback callback) {
+    public ChainBlock elseWith(String flag, ValueCallback callback) {
         if (!hasExecuted && arguments.contains(flag)) {
             callback.call(arguments.get(flag));
             hasExecuted = true;

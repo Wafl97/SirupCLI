@@ -7,4 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+//TODO: rename
 public @interface SecureActionsClass {}
