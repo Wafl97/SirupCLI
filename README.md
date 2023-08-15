@@ -5,7 +5,7 @@
 ### Start CLI
 
 ````java
-public static void main(String[]args){
+public static void main(String[] args){
     String pack = "org.example"; //Your project groupId
     SirupCli cli = new SirupCli(pack);
     cli.start();
@@ -15,7 +15,7 @@ public static void main(String[]args){
 ### Add login
 
 ````java
-public static void main(String[]args){
+public static void main(String[] args){
     String pack = "org.example"; //Your project groupId
     new SirupCli(pack)
         .addLoginHandler(Main::loginHandler)
@@ -35,11 +35,12 @@ public static boolean loginHandler(Input input) {
 
 ````java
 import sirup.cli.annotations.Commands;
+import sirup.cli.annotations.Command;
 import sirup.cli.base.CommandClass;
 
 @Commands
 public class MyCommandClass extends CommandClass {
-    @CliAction(command = "command", alias = "c", description = "This is my command")
+    @Command(command = "command", alias = "c", description = "This is my command")
     public static void myCommand() {
         //Command logic
     }
@@ -77,11 +78,12 @@ Secure commands will only be parsed if a login-handler has been added.
 
 
 import sirup.cli.annotations.SecureActionsClass;
+import sirup.cli.annotations.Command;
 import sirup.cli.base.CommandClass;
 
 @SecureActionsClass
 public class MySecureCommandClass extends CommandClass {
-    @CliAction(command = "secure_command", alias = "sc", description = "This is my secure command")
+    @Command(command = "secure_command", alias = "sc", description = "This is my secure command")
     public static void mySecureCommand() {
         //Secure command logic
     }
@@ -94,11 +96,12 @@ The CommandClass provides method for checking if different arguments are present
 
 ````java
 import sirup.cli.annotations.Commands;
+import sirup.cli.annotations.Command;
 import sirup.cli.base.CommandClass;
 
 @Commands
 public class MyCommandClass extends CommandClass {
-    @CliAction(command = "command", alias = "c", description = "This is my command")
+    @Command(command = "command", alias = "c", description = "This is my command")
     @Args(value = {
             @Arg(flag = "a", arg = "Name or type", description = "This will look for '-a' and whatever follows"),
             @Arg(flag = "b")
@@ -108,7 +111,7 @@ public class MyCommandClass extends CommandClass {
             // 'a' is the value of the argument
         });
 
-        when("b" () -> {
+        when("b", () -> {
             // 'b' will never have a value
         });
     }
