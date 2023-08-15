@@ -118,13 +118,13 @@ public class MyCommandClass extends CommandClass {
 These can be chained to check for the presents of different argument in sequence
 
 ````java
-use("a", a -> {})
-.elseUse("x", x -> {})
+with("a", a -> {})
+.elseWith("x", x -> {})
 .elseWhen("c", () -> {})
 .elseDo(() -> {});
 
 when("b", () -> {})
-.elseUse("z", z -> {})
+.elseWith("z", z -> {})
 .elseWhen("y", () -> {})
 .elseDo(() -> {});
 ````
