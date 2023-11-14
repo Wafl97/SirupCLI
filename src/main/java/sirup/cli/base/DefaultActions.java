@@ -37,8 +37,9 @@ public class DefaultActions extends CommandClass {
                         System.out.print(" <" + cliArg.arg() + ">");
                     }
                     if (!cliArg.description().isEmpty()) {
-                        System.out.println(" -> " + cliArg.description());
+                        System.out.print(" -> " + cliArg.description());
                     }
+                    System.out.println();
                 });
             }
             if (!cliObject.example().isEmpty()) {
