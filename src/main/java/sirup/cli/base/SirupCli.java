@@ -26,7 +26,7 @@ public class SirupCli {
 
     //Security
     private LoginHandler loginHandler;
-    private PrintCallback welcomeMessage = () -> System.out.println("Welcome");
+    private static PrintCallback welcomeMessage = () -> System.out.println("Welcome");
     private static boolean loggedIn = false;
     public static void logout() {
         SirupCli.loggedIn = false;
@@ -56,22 +56,22 @@ public class SirupCli {
     }
 
     public SirupCli addWelcomeMessage(PrintCallback printCallback) {
-        this.welcomeMessage = printCallback;
+        welcomeMessage = printCallback;
         return this;
     }
 
     public SirupCli addWelcomeMessage(String message) {
-        this.welcomeMessage = () -> System.out.println(message);
+        welcomeMessage = () -> System.out.println(message);
         return this;
     }
 
     public SirupCli addGoodbyeMessage(PrintCallback printCallback) {
-        this.goodbyeMessage = printCallback;
+        goodbyeMessage = printCallback;
         return this;
     }
 
     public SirupCli addGoodbyeMessage(String message) {
-        this.goodbyeMessage = () -> System.out.println(message);
+        goodbyeMessage = () -> System.out.println(message);
         return this;
     }
 
@@ -200,7 +200,7 @@ public class SirupCli {
         classes.forEach(clazz -> {
             System.out.println(clazz);
             try {
-                CommandClass comClass = (CommandClass) clazz.getConstructors()[0].newInstance(null);
+                CommandClass comClass = (CommandClass) clazz.getConstructors()[0].newInstance( null);
                 comClass.setInput(input);
                 comClass.setArguments(arguments);
                 Method[] methods = clazz.getDeclaredMethods();
@@ -208,6 +208,7 @@ public class SirupCli {
                     if (method.isAnnotationPresent(Command.class)) {
                         Command a = method.getAnnotation(Command.class);
                         Set<CliObject.CliArg> cliArgs = new HashSet<>();
+                        Set<String> examples = new HashSet<>();
                         methodMap.put(a.command(), new CallPair(method, comClass));
                         if (!a.alias().isEmpty()) {
                             methodMap.put(a.alias(), new CallPair(method, comClass));
@@ -217,10 +218,20 @@ public class SirupCli {
                                 cliArgs.add(new CliObject.CliArg(arg.flag(), arg.arg(), arg.description()));
                             }
                         }
-                        cliObjects.add(new CliObject(a.command(), a.alias(), a.description(), cliArgs));
+                        if (method.isAnnotationPresent(Examples.class)) {
+                            Example[] exampleArr = method.getAnnotation(Examples.class).value();
+                            for (int i = exampleArr.length - 1; i >= 0; i--) {
+                                examples.add(exampleArr[i].value());
+                            }
+                        }
+                        else if (method.isAnnotationPresent(Example.class)) {
+                            examples.add(method.getAnnotation(Example.class).value());
+                        }
+                        cliObjects.add(new CliObject(a.command(), a.alias(), a.description(), examples, cliArgs));
                     }
                 }
             } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+                // TODO: make better logging
                 e.printStackTrace();
             } catch (ClassCastException e) {
                 System.err.println(clazz.getName() +  " must extend " + CommandClass.class.getName());
@@ -235,7 +246,7 @@ public class SirupCli {
         });
     }
 
-    public record CliObject(String command, String alias, String description, Set<CliArg> args) {
+    public record CliObject(String command, String alias, String description, Set<String> example, Set<CliArg> args) {
         public record CliArg(String flag, String arg, String description) {}
     }
 
