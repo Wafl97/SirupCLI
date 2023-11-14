@@ -82,13 +82,13 @@ public class Main {
 package org.example.commands;
 
 import sirup.cli.annotations.Commands;
+import sirup.cli.annotations.Command;
 import sirup.cli.base.CommandClass;
 
 @Commands
 public class MyCommandClass extends CommandClass {
     @CliAction(command = "command", alias = "c", description = "This is my command")
     public void myCommand() {
-        //Command logic
     }
 }
 ````
@@ -154,13 +154,13 @@ Secure commands will only be parsed if a login-handler has been added.
 package org.example.commands;
 
 import sirup.cli.annotations.SecureActionsClass;
+import sirup.cli.annotations.Command;
 import sirup.cli.base.CommandClass;
 
 @SecureActionsClass
 public class MySecureCommandClass extends CommandClass {
     @CliAction(command = "secure_command", alias = "sc", description = "This is my secure command")
     public void mySecureCommand() {
-        //Secure command logic
     }
 }
 ````
@@ -173,11 +173,12 @@ The CommandClass provides method for checking if different arguments are present
 package org.example.commands;
 
 import sirup.cli.annotations.Commands;
+import sirup.cli.annotations.Command;
 import sirup.cli.base.CommandClass;
 
 @Commands
 public class MyCommandClass extends CommandClass {
-    @CliAction(command = "command", alias = "c", description = "This is my command")
+    @Command(command = "command", alias = "c", description = "This is my command")
     @Args(value = {
             @Arg(flag = "a", arg = "Name or type", description = "This will look for '-a' and whatever follows"),
             @Arg(flag = "b")
