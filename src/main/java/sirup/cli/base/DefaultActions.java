@@ -8,6 +8,8 @@ import java.util.Set;
 @Commands
 public class DefaultActions extends CommandClass {
 
+    public DefaultActions() {}
+
     private static Set<SirupCli.CliObject> cliObjects;
 
     public static void setCliObjects(Set<SirupCli.CliObject> cliObjects) {
@@ -27,7 +29,7 @@ public class DefaultActions extends CommandClass {
             if (cliObject.description() != null && !cliObject.description().isEmpty()) {
                 System.out.println(" -> " + cliObject.description());
             }
-            if (cliObject.args().size() > 0) {
+            if (!cliObject.args().isEmpty()) {
                 System.out.println("\tcommand options:");
                 cliObject.args().forEach(cliArg -> {
                     System.out.print("\t-" + cliArg.flag());
@@ -38,6 +40,11 @@ public class DefaultActions extends CommandClass {
                         System.out.println(" -> " + cliArg.description());
                     }
                 });
+            }
+            if (!cliObject.example().isEmpty()) {
+                System.out.println("\texample(s): [");
+                cliObject.example().forEach(example -> System.out.println("\t\t" + example));
+                System.out.println("\t]");
             }
         });
     }

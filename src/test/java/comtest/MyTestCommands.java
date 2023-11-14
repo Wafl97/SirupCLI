@@ -1,9 +1,6 @@
 package comtest;
 
-import sirup.cli.annotations.Arg;
-import sirup.cli.annotations.Args;
-import sirup.cli.annotations.Command;
-import sirup.cli.annotations.Commands;
+import sirup.cli.annotations.*;
 import sirup.cli.base.CommandClass;
 
 import java.io.File;
@@ -16,6 +13,7 @@ public class MyTestCommands extends CommandClass {
             @Arg(flag = "i", arg = "file", description = "The input file"),
             @Arg(flag = "o", arg = "file", description = "The output file")
     })
+    @Example("com1 -i ./file.txt -o file.json")
     public void command1() {
 
 

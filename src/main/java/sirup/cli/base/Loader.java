@@ -17,12 +17,12 @@ public class Loader {
     }
 
     public Set<Class<?>> load(String packageName) {
-        isRuntimeJAR(packageName);
+        //isRuntimeJAR(packageName);
         return loadClasses(loadClassPaths(packageName));
     }
 
     public Set<Class<?>> load(String packageName, Class annotation) {
-        isRuntimeJAR(packageName);
+        //isRuntimeJAR(packageName);
         if (inJar) {
             return loadJar(packageName)
                         .stream()
@@ -78,6 +78,10 @@ public class Loader {
 
     private boolean inJar = false;
 
+    /**
+     * @deprecated this functionality is no longer needed and will be handled internally by the {@link Loader} class
+     */
+    @Deprecated(since = "2.1.2")
     private boolean isRuntimeJAR(String path) {
         File file = new File(path);
         System.out.println("path is dir : " + file.isDirectory());

@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Assertions;
 import sirup.cli.base.Arguments;
 import sirup.cli.base.TesterCommandClass;
 import sirup.cli.inputs.Input;
@@ -12,15 +13,11 @@ public class TestCommandClass extends TesterCommandClass {
     }
 
     public void testCommand1() {
-        with("a", a -> {
-            assertEquals("Test a", a);
-        }).elseDo(() -> fail());
+        with("a", a -> assertEquals("Test a", a)).elseDo(Assertions::fail);
     }
 
     public void testCommand2() {
-        when("b", () -> {
-            assertTrue(true);
-        }).elseDo(() -> fail());
+        when("b", () -> assertTrue(true)).elseDo(Assertions::fail);
     }
 
     public void testCommand3() {
@@ -29,7 +26,7 @@ public class TestCommandClass extends TesterCommandClass {
     }
 
     public void testCommand4() {
-        when("x", () -> fail())
+        when("x", Assertions::fail)
         .elseDo(() -> assertTrue(true));
     }
 

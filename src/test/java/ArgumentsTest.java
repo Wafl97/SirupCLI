@@ -1,6 +1,6 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sirup.cli.base.Arguments;
-import sirup.cli.base.TesterCommandClass;
 import sirup.cli.inputs.Input;
 import sirup.cli.inputs.SequenceReader;
 
@@ -13,9 +13,7 @@ public class ArgumentsTest {
         String input = "t1 -a arg";
         Arguments arguments = new Arguments();
         arguments.rebuild(input.split(" "));
-        arguments.ifContains("-a", () -> {
-            assertTrue(true);
-        }).elseDo(() -> fail());
+        arguments.ifContains("-a", () -> assertTrue(true)).elseDo(Assertions::fail);
 
     }
 
@@ -24,10 +22,8 @@ public class ArgumentsTest {
         String input = "t1 -a arg";
         Arguments arguments = new Arguments();
         arguments.rebuild(input.split(" "));
-        arguments.ifContains("-b", () -> fail())
-                .elseDo(() -> {
-            assertTrue(true);
-        });
+        arguments.ifContains("-b", Assertions::fail)
+                .elseDo(() -> assertTrue(true));
     }
 
     @Test
@@ -35,9 +31,7 @@ public class ArgumentsTest {
         String input = "t1 -a arg";
         Arguments arguments = new Arguments();
         arguments.rebuild(input.split(" "));
-        arguments.ifContainsGet("-a", a -> {
-           assertEquals("arg",a);
-        });
+        arguments.ifContainsGet("-a", a -> assertEquals("arg",a));
     }
 
     @Test
@@ -45,9 +39,7 @@ public class ArgumentsTest {
         String input = "t1 -b arg";
         Arguments arguments = new Arguments();
         arguments.rebuild(input.split(" "));
-        arguments.ifContainsGet("-a", a -> {
-            assertNull(a);
-        });
+        arguments.ifContainsGet("-a", Assertions::assertNull);
     }
 
     @Test
@@ -55,12 +47,8 @@ public class ArgumentsTest {
         String input = "t2 -b \"this is a good 'string'\" -c 'this is also a good \"string\"'";
         Arguments arguments = new Arguments();
         arguments.rebuild(input.split(" "));
-        arguments.ifContainsGet("-b", b -> {
-           assertEquals("this is a good 'string'",b);
-        });
-        arguments.ifContainsGet("-c", c -> {
-           assertEquals("this is also a good \"string\"",c);
-        });
+        arguments.ifContainsGet("-b", b -> assertEquals("this is a good 'string'",b));
+        arguments.ifContainsGet("-c", c -> assertEquals("this is also a good \"string\"",c));
     }
 
     @Test
@@ -68,15 +56,9 @@ public class ArgumentsTest {
         String input = "t3 -a \"-b '-c'\"";
         Arguments arguments = new Arguments();
         arguments.rebuild(input.split(" "));
-        arguments.ifContainsGet("-a", a -> {
-           assertEquals("-b '-c'", a);
-        });
-        arguments.ifContains("-b", () -> {
-            fail();
-        });
-        arguments.ifContains("-c", () -> {
-            fail();
-        });
+        arguments.ifContainsGet("-a", a -> assertEquals("-b '-c'", a));
+        arguments.ifContains("-b", Assertions::fail);
+        arguments.ifContains("-c", Assertions::fail);
     }
 
     @Test
@@ -84,12 +66,8 @@ public class ArgumentsTest {
         String input = "t2 -x \"this is a bad string -y file.txt";
         Arguments arguments = new Arguments();
         arguments.rebuild(input.split(" "));
-        arguments.ifContainsGet("-x", x -> {
-           fail();
-        });
-        arguments.ifContainsGet("-y", y -> {
-            assertEquals("file.txt",y);
-        });
+        arguments.ifContainsGet("-x", x -> fail());
+        arguments.ifContainsGet("-y", y -> assertEquals("file.txt",y));
     }
 
     @Test
