@@ -204,13 +204,13 @@ import sirup.cli.base.CommandClass;
 
 public class Examples extends CommandClass {
     public void exampleCommand() {
-        use("a", a -> {})
-            .elseUse("x", x -> {})
+        with("a", a -> {})
+            .elseWith("x", x -> {})
             .elseWhen("c", () -> {})
             .elseDo(() -> {});
 
         when("b", () -> {})
-            .elseUse("z", z -> {})
+            .elseWith("z", z -> {})
             .elseWhen("y", () -> {})
             .elseDo(() -> {});
     }
